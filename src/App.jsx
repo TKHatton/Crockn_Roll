@@ -133,34 +133,30 @@ export default function App() {
     setPurchased(true); setTimeout(() => setPurchased(false), 3000);
   };
 
-  // Load/Save
+  // Load/Save using localStorage
   useEffect(() => {
-    (async () => {
-      try {
-        const r = await window.storage.get(STORE_KEY);
-        if (r?.value) {
-          const d = JSON.parse(r.value);
-          if (d.meals?.length) setMeals(d.meals);
-          if (d.weeklyItems) setWeeklyItems(d.weeklyItems);
-          if (d.householdCats) setHouseholdCats(d.householdCats);
-          if (d.rotIdx != null) setRotIdx(d.rotIdx);
-          if (d.custom) setCustom(d.custom);
-          if (d.userName) setUserName(d.userName);
-          if (d.headerImg) setHeaderImg(d.headerImg);
-          if (d.storeId) setStoreId(d.storeId);
-          if (d.hNeeds) setHNeeds(new Set(d.hNeeds));
-          if (d.secondMeal) setSecondMeal(d.secondMeal);
-        }
-      } catch {}
-      setLoaded(true);
-    })();
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d.meals?.length) setMeals(d.meals);
+        if (d.weeklyItems) setWeeklyItems(d.weeklyItems);
+        if (d.householdCats) setHouseholdCats(d.householdCats);
+        if (d.rotIdx != null) setRotIdx(d.rotIdx);
+        if (d.custom) setCustom(d.custom);
+        if (d.userName) setUserName(d.userName);
+        if (d.headerImg) setHeaderImg(d.headerImg);
+        if (d.storeId) setStoreId(d.storeId);
+        if (d.hNeeds) setHNeeds(new Set(d.hNeeds));
+        if (d.secondMeal) setSecondMeal(d.secondMeal);
+      }
+    } catch {}
+    setLoaded(true);
   }, []);
 
   useEffect(() => {
     if (!loaded) return;
-    (async () => {
-      try { await window.storage.set(STORE_KEY, JSON.stringify({ meals, weeklyItems, householdCats, rotIdx, custom, userName, headerImg, storeId, hNeeds: [...hNeeds], secondMeal })); } catch {}
-    })();
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ meals, weeklyItems, householdCats, rotIdx, custom, userName, headerImg, storeId, hNeeds: [...hNeeds], secondMeal })); } catch {}
   }, [meals, weeklyItems, householdCats, rotIdx, custom, userName, headerImg, storeId, hNeeds, secondMeal, loaded]);
 
   // Helpers
